@@ -3,6 +3,7 @@ package com.tindev.tindevapi.controller.userAPI;
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
 import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
+import com.tindev.tindevapi.enums.Roles;
 import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +34,7 @@ public interface UserAPI {
             @ApiResponse(code = 200, message = "Retorna um usuário com um id"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
-    ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception;
+    ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception;
 
     @ApiOperation(value = "Atualiza um usuário")
     @ApiResponses(value = {

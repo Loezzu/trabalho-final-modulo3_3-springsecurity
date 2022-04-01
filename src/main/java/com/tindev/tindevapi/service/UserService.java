@@ -9,14 +9,21 @@ import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
 import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.entities.PersonInfoEntity;
+import com.tindev.tindevapi.entities.RoleEntity;
 import com.tindev.tindevapi.entities.UserEntity;
+import com.tindev.tindevapi.enums.Roles;
 import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
+import com.tindev.tindevapi.repository.RoleRepository;
 import com.tindev.tindevapi.repository.UserRepository;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PersonInfoRepository personInfoRepository;
+    private final RoleRepository roleRepository;
     private final ObjectMapper objectMapper;
 
     public Optional<UserEntity> findByUsername(String username) {
@@ -52,17 +60,24 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO createUser(UserCreateDTO userCreateDTO) throws Exception {
+    public UserDTO createUser(UserCreateDTO userCreateDTO, Roles role) throws Exception {
         log.info("Calling the Create user method");
+
         UserEntity userEntity = objectMapper.convertValue(userCreateDTO, UserEntity.class);
         AddressEntity addressEntity = addressRepository.findById(userEntity.getAddressId())
                 .orElseThrow(() -> new Exception("Address not found"));
         PersonInfoEntity personInfoEntity = personInfoRepository.findById(userEntity.getPersoInfoId())
                 .orElseThrow(() -> new Exception("Person info not found"));
+
+        RoleEntity userRole = roleRepository.findById(role.getRole()).orElseThrow(() -> new RegraDeNegocioException("Role not found!"));
+        userEntity.setRole(userRole);
+
         userEntity.setAddress(addressEntity);
         userEntity.setAddressId(addressEntity.getIdAddress());
         userEntity.setPersonInfoEntity(personInfoEntity);
         userEntity.setPersoInfoId(personInfoEntity.getIdPersonInfo());
+        userEntity.setPassword(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()));
+
         return objectMapper.convertValue(userRepository.save(userEntity), UserDTO.class);
     }
 
@@ -110,6 +125,13 @@ public class UserService {
         }
     }
 
+    public List<UserDTOCompleto> listMatchesOfTheUser (Integer id) throws RegraDeNegocioException {
+        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        return userRepository.listMatchesByUserId(id).stream()
+                .map(this::getUserComplete).toList();
+
+    }
+
     private UserDTOCompleto getUserComplete(UserEntity userEntity) {
         UserDTOCompleto userDTOCompleto = objectMapper.convertValue(userEntity, UserDTOCompleto.class);
         userDTOCompleto.setAddressDTO(objectMapper.convertValue(userEntity.getAddress(), AddressDTO.class));
@@ -117,12 +139,12 @@ public class UserService {
         return userDTOCompleto;
     }
 
-    public List<UserDTOCompleto> listMatchesOfTheUser (Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listMatchesByUserId(id).stream()
-                .map(this::getUserComplete).toList();
-
+    private Integer getLogedUserId() throws RegraDeNegocioException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity userLoged = findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("Ninguem logado na aplicação!"));
+        return userLoged.getUserId();
     }
+
 }
 
 

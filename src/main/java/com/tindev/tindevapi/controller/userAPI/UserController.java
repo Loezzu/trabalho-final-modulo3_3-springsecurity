@@ -3,8 +3,11 @@ package com.tindev.tindevapi.controller.userAPI;
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
 import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
+import com.tindev.tindevapi.enums.Roles;
+import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +31,10 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok(userService.listUsers(id));
     }
 
+
     @PostMapping
-    public ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception{
-        return ResponseEntity.ok(userService.createUser(userCreateDTO));
+    public ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception{
+        return ResponseEntity.ok(userService.createUser(userCreateDTO, role));
     }
 
 

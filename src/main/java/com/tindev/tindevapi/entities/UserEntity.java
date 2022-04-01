@@ -74,7 +74,7 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "userEntitySecond", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchEntity> matchesSecond;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "role")
     private RoleEntity role;
 
