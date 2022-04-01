@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,6 +33,11 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final PersonInfoRepository personInfoRepository;
     private final ObjectMapper objectMapper;
+
+    public Optional<UserEntity> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 
     public List<UserDTO> listUsers(Integer id) throws RegraDeNegocioException {
         if (id != null) {

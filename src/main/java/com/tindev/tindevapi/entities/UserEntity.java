@@ -8,8 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,7 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "tindev_user")
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     @Id
     @Column(name = "user_id", columnDefinition = "serial")
@@ -70,6 +74,46 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntitySecond", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchEntity> matchesSecond;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role")
+    private RoleEntity role;
 
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> rule = new ArrayList<>();
+        rule.add(role);
+        return rule;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

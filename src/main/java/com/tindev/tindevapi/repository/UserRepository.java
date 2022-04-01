@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
@@ -21,6 +22,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query("select tu from tindev_user tu join fetch MATCH_TINDEV_USER mtu on mtu.matchedUserFirst = ?1 and tu.userId = mtu.matchedUserSecond or mtu.matchedUserSecond = ?1 and tu.userId = mtu.matchedUserFirst")
     List<UserEntity> listMatchesByUserId(@Param("id") Integer id);
+
+    Optional<UserEntity> findByUsername(String username);
 
 
 
