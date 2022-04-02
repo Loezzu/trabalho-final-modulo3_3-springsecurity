@@ -16,14 +16,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserCreateDTO{
 
-    @ApiModelProperty(value = "The user's personal identification ID", example = "1", required = true)
-    @NotNull
-    private Integer PersoInfoId;
-
-    @ApiModelProperty(value = "The user's address ID", example = "1", required = true)
-    @NotNull
-    private Integer AddressId;
-
     @ApiModelProperty(value = "The username", example = "Joao123", required = true)
     @NotNull
     @NotEmpty(message = "Username could not be empty")

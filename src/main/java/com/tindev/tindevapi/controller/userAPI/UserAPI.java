@@ -29,6 +29,13 @@ public interface UserAPI {
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<List<UserDTO>> listUser(@RequestParam(required = false) Integer id) throws Exception;
 
+    @ApiOperation(value = "Retorna o usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o usuário logado"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<UserDTOCompleto> getLogedUser() throws Exception;
+
     @ApiOperation(value = "Adiciona um usuário")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna um usuário com um id"),
@@ -44,12 +51,26 @@ public interface UserAPI {
     ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
                                          @Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception;
 
+    @ApiOperation(value = "Atualiza o usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o usuário logado atualizado"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception;
+
     @ApiOperation(value = "Deleta um usuário")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna uma mensagem de sucesso"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<String> deleteUser(@PathVariable("userId") Integer id) throws Exception;
+
+    @ApiOperation(value = "Deleta usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna uma mensagem de sucesso"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<String> deleteLogedUser() throws Exception;
 
     @ApiOperation(value = "Mostra um usuário completo por ID / Mostra lista de usuários completos")
     @ApiResponses(value = {

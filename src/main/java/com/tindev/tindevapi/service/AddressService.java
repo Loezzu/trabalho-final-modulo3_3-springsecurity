@@ -59,4 +59,8 @@ public class AddressService {
         addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
         addressRepository.deleteById(id);
     }
+
+    public void deleteUserLoged(){
+
+    }
 }

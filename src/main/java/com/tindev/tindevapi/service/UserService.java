@@ -60,6 +60,11 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public UserDTOCompleto getUserLoged() throws RegraDeNegocioException {
+        UserEntity userLoged = userRepository.getById(getLogedUserId());
+        return getUserComplete(userLoged);
+    }
+
     public UserDTO createUser(UserCreateDTO userCreateDTO, Roles role) throws Exception {
         log.info("Calling the Create user method");
 
@@ -84,13 +89,23 @@ public class UserService {
     public UserDTO updateUser(Integer id, UserCreateDTO userUpdated) throws RegraDeNegocioException {
         userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
         UserEntity userEntity = userRepository.getById(id);
-        userEntity.setPersoInfoId(userUpdated.getPersoInfoId());
-        userEntity.setAddressId(userUpdated.getAddressId());
         userEntity.setGender(userUpdated.getGender());
-        userEntity.setPassword(userUpdated.getPassword());
+        userEntity.setPassword(new BCryptPasswordEncoder().encode(userUpdated.getPassword()));
         userEntity.setUsername(userUpdated.getUsername());
         userEntity.setProgLangs(userUpdated.getProgLangs());
         userEntity.setPref(userUpdated.getPref());
+        return objectMapper.convertValue((userRepository.save(userEntity)), UserDTO.class);
+    }
+
+    public UserDTO updateLogedUser(UserCreateDTO userUpdated) throws RegraDeNegocioException {
+        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        UserEntity userEntity = userRepository.getById(getLogedUserId());
+        userEntity.setGender(userUpdated.getGender());
+        userEntity.setPassword(new BCryptPasswordEncoder().encode(userUpdated.getPassword()));
+        userEntity.setUsername(userUpdated.getUsername());
+        userEntity.setProgLangs(userUpdated.getProgLangs());
+        userEntity.setPref(userUpdated.getPref());
+        userRepository.save(userEntity);
         return objectMapper.convertValue((userRepository.save(userEntity)), UserDTO.class);
     }
 
@@ -131,6 +146,11 @@ public class UserService {
                 .map(this::getUserComplete).toList();
 
     }
+
+    public void deleteUserLoged() throws RegraDeNegocioException {
+        userRepository.deleteById(getLogedUserId());
+    }
+
 
     private UserDTOCompleto getUserComplete(UserEntity userEntity) {
         UserDTOCompleto userDTOCompleto = objectMapper.convertValue(userEntity, UserDTOCompleto.class);

@@ -31,16 +31,24 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok(userService.listUsers(id));
     }
 
-
     @PostMapping
     public ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception{
         return ResponseEntity.ok(userService.createUser(userCreateDTO, role));
     }
 
+    @GetMapping("/logedUser/getMyUser")
+    public ResponseEntity<UserDTOCompleto> getLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.getUserLoged());
+    }
+
+    @PutMapping("/logedUser/update")
+    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception {
+        return ResponseEntity.ok(userService.updateLogedUser(userCreateDTO));
+    }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
-                                                    @Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception {
+                                               @Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception {
         return ResponseEntity.ok(userService.updateUser(id, userCreateDTO));
     }
 
@@ -48,6 +56,12 @@ public class UserController implements UserAPI{
     public ResponseEntity<String> deleteUser(@PathVariable("userId") Integer id) throws Exception {
         userService.deleteUser(id);
         return ResponseEntity.ok("User deleted!");
+    }
+
+    @DeleteMapping("/logedUser/delete")
+    public ResponseEntity<String> deleteLogedUser() throws Exception {
+        userService.deleteUserLoged();
+        return ResponseEntity.ok("User deleted");
     }
 
     @GetMapping("/list-likes-by-id")
