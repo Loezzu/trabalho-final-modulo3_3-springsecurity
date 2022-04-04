@@ -35,7 +35,7 @@ public class SpringFoxConfig {
         return new ApiInfoBuilder()
                 .title("Tindev REST API")
                 .description("Tindev with Spring Boot REST API")
-                .version("4.0.0")
+                .version("5.0.0")
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                 .contact(new Contact("Tindev", "https://www.dbccompany.com.br/", "tindev.dbc@gmail.com"))

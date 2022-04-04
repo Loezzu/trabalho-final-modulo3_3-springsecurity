@@ -3,8 +3,10 @@ package com.tindev.tindevapi.controller.auth;
 
 import com.tindev.tindevapi.dto.auth.LoginDTO;
 import com.tindev.tindevapi.security.TokenService;
-import com.tindev.tindevapi.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,15 +22,15 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
-public class AuthController {
+@Api(value = "0 - Login API", produces = MediaType.APPLICATION_JSON_VALUE, tags = {"0 - Login API"})
+public class AuthController implements AuthAPI{
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final UserService userService;
 
 
     @PostMapping()
-    public String auth(@RequestBody @Valid LoginDTO loginDTO) {
+    public ResponseEntity<String> auth(@RequestBody @Valid LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         loginDTO.getUsername(),
@@ -37,7 +39,7 @@ public class AuthController {
 
         Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         String token = tokenService.getToken(authenticate);
-        return token;
+        return ResponseEntity.ok(token);
     }
 
 

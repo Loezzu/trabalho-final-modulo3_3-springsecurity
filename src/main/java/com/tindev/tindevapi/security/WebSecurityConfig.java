@@ -27,9 +27,12 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable().and().cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user/**", "/address/**", "/personinfo/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/auth").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/**", "/address/**", "/personinfo/**").permitAll()
+                .antMatchers("/user/loged-user/list-received-likes", "/user/loged-user/get-available-users", "/like/loged-user/delete-likes").hasAnyRole("PRO", "ADMIN")
+                .antMatchers("/user/loged-user/**", "/address/loged-user/**", "/personinfo/loged-user/**", "/like/loged-user/**").hasAnyRole("PRO", "FREE", "ADMIN")
+                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
     }
@@ -54,6 +57,6 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
     }
 
 //    public static void main(String[] args) {
-//        System.out.println(new BCryptPasswordEncoder().encode("string"));
+//        System.out.println(new BCryptPasswordEncoder().encode("123"));
 //    }
 }

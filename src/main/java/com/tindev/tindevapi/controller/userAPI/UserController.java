@@ -1,10 +1,8 @@
 package com.tindev.tindevapi.controller.userAPI;
 
-import com.tindev.tindevapi.dto.user.UserCreateDTO;
-import com.tindev.tindevapi.dto.user.UserUpdateDTO;
-import com.tindev.tindevapi.dto.user.UserDTO;
-import com.tindev.tindevapi.dto.user.UserDTOCompleto;
+import com.tindev.tindevapi.dto.user.*;
 import com.tindev.tindevapi.enums.Roles;
+import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +33,6 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok(userService.createUser(userCreateDTO, role));
     }
 
-    @GetMapping("/loged-user/getMyUser")
-    public ResponseEntity<UserDTOCompleto> getLogedUser() throws Exception {
-        return ResponseEntity.ok(userService.getUserLoged());
-    }
-
-    @PutMapping("/loged-user/update")
-    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
-        return ResponseEntity.ok(userService.updateLogedUser(userUpdateDTO));
-    }
-
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
                                                @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
@@ -57,35 +45,51 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok("User deleted!");
     }
 
+    @GetMapping("/getComplete")
+    public ResponseEntity<List<UserDTOCompleto>> listUserComplete(@RequestParam(value = "id", required = false) Integer id) throws Exception {
+        return ResponseEntity.ok(userService.listUserDTOComplete(id));
+    }
+
+    @GetMapping("/loged-user/getMyUser")
+    public ResponseEntity<UserDTOCompleto> getLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.getUserLoged());
+    }
+
+    @PutMapping("/loged-user/update")
+    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
+        return ResponseEntity.ok(userService.updateLogedUser(userUpdateDTO));
+    }
+
     @DeleteMapping("/loged-user/delete")
     public ResponseEntity<String> deleteLogedUser() throws Exception {
         userService.deleteUserLoged();
         return ResponseEntity.ok("User deleted");
     }
 
-    @GetMapping("/list-likes-by-id")
-    public ResponseEntity<List<UserDTOCompleto>> listLikesById(@RequestParam("id") Integer id) throws Exception {
-        return ResponseEntity.ok(userService.listLikesOfTheUserById(id));
+    @GetMapping("/loged-user/list-likes")
+    public ResponseEntity<List<UserDTOWithoutPassword>> listLikesLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.listLikesOfTheLogedUser());
     }
 
-    @GetMapping("/list-received-likes-by-id")
-    public ResponseEntity<List<UserDTOCompleto>> listReceivedLikesById(@RequestParam("id") Integer id) throws Exception {
-        return ResponseEntity.ok(userService.listReceivedLikesOfTheUserById(id));
+    @GetMapping("/loged-user/list-received-likes")
+    public ResponseEntity<List<UserDTOWithoutPassword>> listReceivedLikesLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.listReceivedLikesOfTheLogedUser());
     }
 
-    @GetMapping("/getComplete")
-    public ResponseEntity<List<UserDTOCompleto>> listUserComplete(@RequestParam(value = "id", required = false) Integer id) throws Exception {
-        return ResponseEntity.ok(userService.listUserDTOComplete(id));
-    }
-
-    @GetMapping("/get-matches-by-id")
-    public ResponseEntity<List<UserDTOCompleto>> listMatchesById(@RequestParam("id") Integer id) throws Exception {
-        return ResponseEntity.ok(userService.listMatchesOfTheUser(id));
+    @GetMapping("/loged-user/get-matches")
+    public ResponseEntity<List<UserDTOWithoutPassword>> listMatchesLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.listMatchesOfTheLogedUser());
     }
 
     @GetMapping("/loged-user/get-available-users")
-    public ResponseEntity<List<UserDTO>> listAvailableUsersByLogedUser() throws Exception {
+    public ResponseEntity<List<UserDTOWithoutPassword>> listAvailableUsersByLogedUser() throws Exception {
         return ResponseEntity.ok(userService.listAvailableLogedUser());
+    }
+
+    @PutMapping("/loged-user/change-role")
+    public ResponseEntity<String> changeRoleLogedUser(@RequestParam Roles role) throws Exception {
+        userService.changeRoleUserLoged(role);
+        return ResponseEntity.ok("Seu plano foi trocado com sucesso!");
     }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api
@@ -46,5 +47,19 @@ public interface PersonInfoAPI {
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<String> delete(@RequestParam("id") Integer id) throws Exception;
+
+    @ApiOperation(value = "Mostra as informações pessoais do usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna as informações pessoais do usuário logado"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<PersonInfoDTO> findByLogedUser() throws Exception;
+
+    @ApiOperation(value = "Atualiza as informações pessoais do usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna as informações pessoais atualizadas"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<PersonInfoDTO> updateByLogedUser(@RequestBody @Valid PersonInfoCreateDTO personInfoCreateDTO) throws Exception;
 
 }

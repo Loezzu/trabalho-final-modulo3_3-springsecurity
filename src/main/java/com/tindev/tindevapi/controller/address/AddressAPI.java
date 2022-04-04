@@ -46,4 +46,18 @@ public interface AddressAPI {
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<String> delete(@RequestParam("id") Integer id) throws Exception;
+
+    @ApiOperation(value = "Mostra o endereço do usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o endereço do usuário logado"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<AddressDTO> getAddressByLogedUser() throws Exception;
+
+    @ApiOperation(value = "Atualiza o endereço do usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o endereço atualizado"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<AddressDTO> updateAddressByLogedUser(@Valid @RequestBody AddressCreateDTO addressCreateDTO) throws Exception;
 }

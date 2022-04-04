@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tindev.tindevapi.dto.address.AddressDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
-import com.tindev.tindevapi.dto.user.UserCreateDTO;
-import com.tindev.tindevapi.dto.user.UserUpdateDTO;
-import com.tindev.tindevapi.dto.user.UserDTO;
-import com.tindev.tindevapi.dto.user.UserDTOCompleto;
+import com.tindev.tindevapi.dto.user.*;
 import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.entities.RoleEntity;
@@ -118,16 +115,16 @@ public class UserService {
         return objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false).convertValue((userRepository.findById(id)), UserDTO.class);
     }
 
-    public List<UserDTOCompleto> listLikesOfTheUserById(Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listLikesById(id).stream()
-                .map(this::getUserComplete).toList();
+    public List<UserDTOWithoutPassword> listLikesOfTheLogedUser() throws RegraDeNegocioException {
+        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        return userRepository.listLikesById(getLogedUserId()).stream()
+                .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
-    public List<UserDTOCompleto> listReceivedLikesOfTheUserById(Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listReceivedLikesById(id).stream()
-                .map(this::getUserComplete).toList();
+    public List<UserDTOWithoutPassword> listReceivedLikesOfTheLogedUser() throws RegraDeNegocioException {
+        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        return userRepository.listReceivedLikesById(getLogedUserId()).stream()
+                .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
     public List<UserDTOCompleto> listUserDTOComplete(Integer id) throws RegraDeNegocioException {
@@ -139,11 +136,10 @@ public class UserService {
         }
     }
 
-    public List<UserDTOCompleto> listMatchesOfTheUser (Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listMatchesByUserId(id).stream()
-                .map(this::getUserComplete).toList();
-
+    public List<UserDTOWithoutPassword> listMatchesOfTheLogedUser() throws RegraDeNegocioException {
+        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        return userRepository.listMatchesByUserId(getLogedUserId()).stream()
+                .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
     public void deleteUserLoged() throws RegraDeNegocioException {
@@ -158,7 +154,7 @@ public class UserService {
         return userDTOCompleto;
     }
 
-    public List<UserDTO> listAvailableLogedUser() throws Exception {
+    public List<UserDTOWithoutPassword> listAvailableLogedUser() throws Exception {
         try {
             UserEntity userEntity = getLogedUser();
             List<UserEntity> availableUsers = new ArrayList<>();
@@ -170,10 +166,22 @@ public class UserService {
                     availableUsers.add(user);
                 }
             }
-            return availableUsers.stream().map(user -> objectMapper.convertValue(user, UserDTO.class))
+            return availableUsers.stream().map(user -> objectMapper.convertValue(user, UserDTOWithoutPassword.class))
                     .collect(Collectors.toList());
         }catch (Exception e){
             throw new RegraDeNegocioException("User not found");
+        }
+    }
+
+    public void changeRoleUserLoged(Roles role) throws RegraDeNegocioException {
+        UserEntity userLoged = getLogedUser();
+        RoleEntity userRole = roleRepository.findById(role.getRole()).orElseThrow(() -> new RegraDeNegocioException("Role not found!"));
+
+        if(userLoged.getRole().equals(userRole)){
+            throw new RegraDeNegocioException("Você ja tem esse plano");
+        }else {
+            userLoged.setRole(userRole);
+            userRepository.save(userLoged);
         }
     }
 

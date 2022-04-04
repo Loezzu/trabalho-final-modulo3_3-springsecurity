@@ -50,4 +50,18 @@ public interface LikeAPI {
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<String> deleteLikeByUser(@PathVariable("userId") Integer userId) throws Exception;
+
+    @ApiOperation(value = "Dar like pelo usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o like"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<LikeDTO> darLikeByLogedUser(@PathVariable("likedUserId") Integer likedUserId) throws Exception;
+
+    @ApiOperation(value = "Deleta os likes do usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna uma Mensagem de sucesso"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    ResponseEntity<String> deleteLikesByLogedUser() throws Exception;
 }
