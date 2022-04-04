@@ -44,7 +44,9 @@ public class MatchService {
         }
         if(userService.getUserById(userid1).getProgLangs().equals(userService.getUserById(userid2).getProgLangs())){
             match.setMatchedUserFirst(userid1);
+            match.setNameFirst(userService.getUserById(userid1).getUsername());
             match.setMatchedUserSecond(userid2);
+            match.setNameSecond(userService.getUserById(userid2).getUsername());
             match.setUserEntityFirst(objectMapper.convertValue(userService.getUserById(userid1), UserEntity.class));
             match.setUserEntitySecond(objectMapper.convertValue(userService.getUserById(userid2), UserEntity.class));
             return objectMapper.convertValue(matchRepository.save(match), MatchDTO.class);

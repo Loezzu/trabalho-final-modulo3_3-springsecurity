@@ -44,4 +44,14 @@ public class AddressController implements AddressAPI {
         return new ResponseEntity<>("Address deleted", HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/loged-user/get")
+    public ResponseEntity<AddressDTO> getAddressByLogedUser() throws Exception{
+        return ResponseEntity.ok(addressService.getLogedUserAddress());
+    }
+
+    @PutMapping("/loged-user/update")
+    public ResponseEntity<AddressDTO> updateAddressByLogedUser(@Valid @RequestBody AddressCreateDTO addressCreateDTO) throws Exception{
+        return ResponseEntity.ok(addressService.updateLogedUserAddress(addressCreateDTO));
+    }
+
 }

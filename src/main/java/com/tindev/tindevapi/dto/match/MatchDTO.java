@@ -7,9 +7,9 @@ public class MatchDTO{
 
     private Integer matchId;
     private Integer matchedUserFirst;
-//    private String matchedUserNameFirst;
-//    private String machedUserEmailFirst;
+    private String nameFirst;
+
     private Integer matchedUserSecond;
-//    private String matchedUserNameSecond;
-//    private String matchedUserEmailSecond;
+    private String nameSecond;
+
 }

@@ -42,11 +42,21 @@ public class LikeController implements LikeAPI{
     }
 
 
-
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<String> deleteLikeByUser(@PathVariable("userId") Integer userId) throws Exception {
         likeService.deleteLikeByUserId(userId);
         return ResponseEntity.ok("Like deleted");
+    }
+
+    @PostMapping("/loged-user/{likedUserId}")
+    public ResponseEntity<LikeDTO> darLikeByLogedUser(@PathVariable("likedUserId") Integer likedUserId) throws Exception {
+        return ResponseEntity.ok(likeService.giveLikeByLogedUser(likedUserId));
+    }
+
+    @DeleteMapping("/loged-user/delete-likes")
+    public ResponseEntity<String> deleteLikesByLogedUser() throws Exception {
+        likeService.deleteLikesByLogedUser();
+        return ResponseEntity.ok("Likes deleted");
     }
 
 

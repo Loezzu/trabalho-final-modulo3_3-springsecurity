@@ -46,6 +46,15 @@ public class PersonInfoController implements PersonInfoAPI{
         return new ResponseEntity<>("PersoInfo deleted", HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/loged-user/get")
+    public ResponseEntity<PersonInfoDTO> findByLogedUser() throws Exception {
+        return ResponseEntity.ok(persoInfoService.getLogedUserPersonInfo());
+    }
+
+    @PutMapping("/loged-user/update")
+    public ResponseEntity<PersonInfoDTO> updateByLogedUser(@RequestBody @Valid PersonInfoCreateDTO personInfoCreateDTO) throws Exception {
+        return ResponseEntity.ok(persoInfoService.updateLogedUserPersonInfo(personInfoCreateDTO));
+    }
 
 
 

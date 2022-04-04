@@ -1,13 +1,12 @@
 package com.tindev.tindevapi.controller.userAPI;
 
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
+import com.tindev.tindevapi.dto.user.UserUpdateDTO;
 import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
 import com.tindev.tindevapi.enums.Roles;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,20 +35,20 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok(userService.createUser(userCreateDTO, role));
     }
 
-    @GetMapping("/logedUser/getMyUser")
+    @GetMapping("/loged-user/getMyUser")
     public ResponseEntity<UserDTOCompleto> getLogedUser() throws Exception {
         return ResponseEntity.ok(userService.getUserLoged());
     }
 
-    @PutMapping("/logedUser/update")
-    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception {
-        return ResponseEntity.ok(userService.updateLogedUser(userCreateDTO));
+    @PutMapping("/loged-user/update")
+    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
+        return ResponseEntity.ok(userService.updateLogedUser(userUpdateDTO));
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
-                                               @Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception {
-        return ResponseEntity.ok(userService.updateUser(id, userCreateDTO));
+                                               @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
+        return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO));
     }
 
     @DeleteMapping("/{userId}")
@@ -58,7 +57,7 @@ public class UserController implements UserAPI{
         return ResponseEntity.ok("User deleted!");
     }
 
-    @DeleteMapping("/logedUser/delete")
+    @DeleteMapping("/loged-user/delete")
     public ResponseEntity<String> deleteLogedUser() throws Exception {
         userService.deleteUserLoged();
         return ResponseEntity.ok("User deleted");
@@ -82,6 +81,11 @@ public class UserController implements UserAPI{
     @GetMapping("/get-matches-by-id")
     public ResponseEntity<List<UserDTOCompleto>> listMatchesById(@RequestParam("id") Integer id) throws Exception {
         return ResponseEntity.ok(userService.listMatchesOfTheUser(id));
+    }
+
+    @GetMapping("/loged-user/get-available-users")
+    public ResponseEntity<List<UserDTO>> listAvailableUsersByLogedUser() throws Exception {
+        return ResponseEntity.ok(userService.listAvailableLogedUser());
     }
 
 }

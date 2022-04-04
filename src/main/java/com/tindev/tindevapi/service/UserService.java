@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tindev.tindevapi.dto.address.AddressDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
+import com.tindev.tindevapi.dto.user.UserUpdateDTO;
 import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
 import com.tindev.tindevapi.entities.AddressEntity;
@@ -17,13 +18,11 @@ import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
 import com.tindev.tindevapi.repository.RoleRepository;
 import com.tindev.tindevapi.repository.UserRepository;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spi.service.contexts.SecurityContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +85,7 @@ public class UserService {
         return objectMapper.convertValue(userRepository.save(userEntity), UserDTO.class);
     }
 
-    public UserDTO updateUser(Integer id, UserCreateDTO userUpdated) throws RegraDeNegocioException {
+    public UserDTO updateUser(Integer id, UserUpdateDTO userUpdated) throws RegraDeNegocioException {
         userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
         UserEntity userEntity = userRepository.getById(id);
         userEntity.setGender(userUpdated.getGender());
@@ -97,7 +96,7 @@ public class UserService {
         return objectMapper.convertValue((userRepository.save(userEntity)), UserDTO.class);
     }
 
-    public UserDTO updateLogedUser(UserCreateDTO userUpdated) throws RegraDeNegocioException {
+    public UserDTO updateLogedUser(UserUpdateDTO userUpdated) throws RegraDeNegocioException {
         userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
         UserEntity userEntity = userRepository.getById(getLogedUserId());
         userEntity.setGender(userUpdated.getGender());
@@ -159,10 +158,34 @@ public class UserService {
         return userDTOCompleto;
     }
 
-    private Integer getLogedUserId() throws RegraDeNegocioException {
+    public List<UserDTO> listAvailableLogedUser() throws Exception {
+        try {
+            UserEntity userEntity = getLogedUser();
+            List<UserEntity> availableUsers = new ArrayList<>();
+            for (UserEntity user : userRepository.findAll()) {
+                if(userEntity.getUsername().equals(user.getUsername()) || user.getUserId() == 1){
+                    continue;
+                }
+                if(userEntity.getPref().isCompatible(user.getGender()) && user.getPref().isCompatible(userEntity.getGender())) {
+                    availableUsers.add(user);
+                }
+            }
+            return availableUsers.stream().map(user -> objectMapper.convertValue(user, UserDTO.class))
+                    .collect(Collectors.toList());
+        }catch (Exception e){
+            throw new RegraDeNegocioException("User not found");
+        }
+    }
+
+    protected Integer getLogedUserId() throws RegraDeNegocioException {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userLoged = findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("Ninguem logado na aplicação!"));
         return userLoged.getUserId();
+    }
+
+    protected UserEntity getLogedUser() throws RegraDeNegocioException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("Ninguem logado na aplicação!"));
     }
 
 }

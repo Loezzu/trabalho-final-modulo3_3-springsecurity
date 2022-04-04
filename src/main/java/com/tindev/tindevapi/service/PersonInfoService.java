@@ -20,6 +20,7 @@ public class PersonInfoService {
 
     private final PersonInfoRepository personInfoRepository;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     public List<PersonInfoDTO> listPersonInfo(Integer id) throws RegraDeNegocioException {
         if(id != null) {
@@ -55,6 +56,19 @@ public class PersonInfoService {
     public void delete(Integer id) throws RegraDeNegocioException {
         personInfoRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
         personInfoRepository.deleteById(id);
+    }
+
+    public PersonInfoDTO getLogedUserPersonInfo() throws RegraDeNegocioException {
+        PersonInfoEntity personInfo = userService.getLogedUser().getPersonInfoEntity();
+        return objectMapper.convertValue(personInfo, PersonInfoDTO.class);
+    }
+
+    public PersonInfoDTO updateLogedUserPersonInfo(PersonInfoCreateDTO personInfoCreateDTO) throws RegraDeNegocioException {
+        PersonInfoEntity personInfo = userService.getLogedUser().getPersonInfoEntity();
+        personInfo.setAge(personInfoCreateDTO.getAge());
+        personInfo.setEmail(personInfoCreateDTO.getEmail());
+        personInfo.setRealName(personInfoCreateDTO.getRealName());
+        return objectMapper.convertValue(personInfoRepository.save(personInfo), PersonInfoDTO.class);
     }
 
 }

@@ -12,5 +12,4 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Integer> {
     LikeEntity findByLikedUserIdAndUserId(Integer userId, Integer likedUserId);
     List<LikeEntity> findAllByUserId(Integer id);
 
-
 }

@@ -3,7 +3,9 @@ package com.tindev.tindevapi.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.address.AddressCreateDTO;
 import com.tindev.tindevapi.dto.address.AddressDTO;
+import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import com.tindev.tindevapi.entities.AddressEntity;
+import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     public List<AddressDTO> listAddress(Integer id) throws RegraDeNegocioException {
         if(id != null){
@@ -60,7 +63,17 @@ public class AddressService {
         addressRepository.deleteById(id);
     }
 
-    public void deleteUserLoged(){
+    public AddressDTO getLogedUserAddress() throws RegraDeNegocioException {
+        AddressEntity address = userService.getLogedUser().getAddress();
+        return objectMapper.convertValue(address, AddressDTO.class);
+    }
 
+    public AddressDTO updateLogedUserAddress(AddressCreateDTO addressCreateDTO) throws RegraDeNegocioException {
+        AddressEntity address = userService.getLogedUser().getAddress();
+        address.setStreet(addressCreateDTO.getStreet());
+        address.setNumber(addressCreateDTO.getNumber());
+        address.setCity(addressCreateDTO.getCity());
+        address.setCep(addressCreateDTO.getCep());
+        return objectMapper.convertValue(addressRepository.save(address), AddressDTO.class);
     }
 }

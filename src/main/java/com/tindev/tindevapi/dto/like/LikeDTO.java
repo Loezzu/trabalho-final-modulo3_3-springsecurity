@@ -7,6 +7,8 @@ import lombok.Data;
 public class LikeDTO {
     private Integer likeId;
     private Integer userId;
+    private String usernameUser;
     private Integer likedUserId;
+    private String usernameLikedUser;
 
 }

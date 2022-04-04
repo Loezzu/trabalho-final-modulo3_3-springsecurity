@@ -1,10 +1,10 @@
 package com.tindev.tindevapi.controller.userAPI;
 
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
+import com.tindev.tindevapi.dto.user.UserUpdateDTO;
 import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.dto.user.UserDTOCompleto;
 import com.tindev.tindevapi.enums.Roles;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -49,14 +49,14 @@ public interface UserAPI {
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
-                                         @Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception;
+                                         @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception;
 
     @ApiOperation(value = "Atualiza o usuário logado")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna o usuário logado atualizado"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
-    ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserCreateDTO userCreateDTO) throws Exception;
+    ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception;
 
     @ApiOperation(value = "Deleta um usuário")
     @ApiResponses(value = {

@@ -23,8 +23,15 @@ public class LikeEntity {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Integer userId;
 
+    @Column(name = "USERNAME_USER", updatable = false)
+    private String usernameUser;
+
     @Column(name = "liked_user_id", insertable = false, updatable = false)
     private Integer likedUserId;
+
+    @Column(name = "USERNAME_LIKED", updatable = false)
+    private String usernameLikedUser;
+
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

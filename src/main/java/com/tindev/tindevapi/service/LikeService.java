@@ -24,7 +24,7 @@ public class LikeService {
     public List<LikeDTO> listAllLikes() {
         return likeRepository.findAll()
                 .stream()
-                .map(like -> objectMapper.convertValue(like, LikeDTO.class))
+                .map(like ->  objectMapper.convertValue(like, LikeDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +42,9 @@ public class LikeService {
         }
         LikeEntity likeEntity = new LikeEntity();
         likeEntity.setUserId(userId);
+        likeEntity.setUsernameUser(userService.getUserById(userId).getUsername());
         likeEntity.setLikedUserId(likedUserId);
+        likeEntity.setUsernameLikedUser(userService.getUserById(likedUserId).getUsername());
         likeEntity.setUserEntity(objectMapper.convertValue(userService.getUserById(userId), UserEntity.class));
         likeEntity.setUserEntityLiked(objectMapper.convertValue(userService.getUserById(likedUserId), UserEntity.class));
         likeRepository.save(likeEntity);
@@ -61,6 +63,14 @@ public class LikeService {
     public void deleteLikeByUserId(Integer id) throws RegraDeNegocioException {
         userService.getUserById(id);
         likeRepository.deleteAll(likeRepository.findAllByUserId(id));
+    }
+
+    public void deleteLikesByLogedUser() throws RegraDeNegocioException {
+        deleteLikeByUserId(userService.getLogedUserId());
+    }
+
+    public LikeDTO giveLikeByLogedUser(Integer likedUserId) throws Exception {
+        return giveLike(userService.getLogedUserId(), likedUserId);
     }
 }
 
