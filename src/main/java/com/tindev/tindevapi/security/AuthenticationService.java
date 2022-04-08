@@ -2,6 +2,7 @@ package com.tindev.tindevapi.security;
 
 
 import com.tindev.tindevapi.entities.UserEntity;
+import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,12 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> optionalUser = userService.findByUsername(username);
+        Optional<UserEntity> optionalUser = null;
+        try {
+            optionalUser = userService.findByUsername(username);
+        } catch (RegraDeNegocioException e) {
+            e.printStackTrace();
+        }
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         }

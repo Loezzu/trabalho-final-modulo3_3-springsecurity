@@ -38,10 +38,9 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final ObjectMapper objectMapper;
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<UserEntity> findByUsername(String username) throws RegraDeNegocioException {
+        return Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("User not found")));
     }
-
 
     public List<UserDTO> listUsers(Integer id) throws RegraDeNegocioException {
         if (id != null) {
