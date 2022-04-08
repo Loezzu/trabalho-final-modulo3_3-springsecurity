@@ -1,15 +1,13 @@
 package com.tindev.tindevapi.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Getter
 @Setter

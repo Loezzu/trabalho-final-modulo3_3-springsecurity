@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tindev.tindevapi.enums.Gender;
 import com.tindev.tindevapi.enums.Pref;
 import com.tindev.tindevapi.enums.ProgLangs;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "tindev_user")
+@Builder
 public class UserEntity implements UserDetails {
 
     @Id
